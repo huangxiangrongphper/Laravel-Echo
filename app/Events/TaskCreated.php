@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Order;
+use App\Task;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -11,20 +11,20 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class OrderUpdated implements ShouldBroadcast
+class TaskCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
+    public $task;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Order $order)
+    public function __construct(Task $task)
     {
-        $this->order = $order;
+        $this->task = $task;
+        $this->dontBroadcastToCurrentUser();
     }
 
     /**
@@ -34,6 +34,6 @@ class OrderUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('orders');
+        return new PrivateChannel('tasks.'.$this->task->project_id); //task.1 或者 task.2
     }
 }
